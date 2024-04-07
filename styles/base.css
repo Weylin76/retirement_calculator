@@ -1,0 +1,26 @@
+body{
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: lightskyblue;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  .highlight {
+    background-color: #ffff99;
+  }
+
+  #newBillForm > *{
+    font-size: 1rem;
+  }
+
+  option{
+    font-size: 1rem;
+  }

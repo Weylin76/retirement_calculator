@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="styles/base.css">
+    <script src="scripts/bill.js" defer></script>
+    <script src="scripts/inflation.js" defer></script>
+    <script src="scripts/retirement.js" defer></script>
+    <script src="scripts/retirementWithBills.js" defer></script>
+    <title>Retirement Savings Calculator</title>
+</head>
+
+<body>
+    <h1>Retirement Savings Calculator</h1>
+    <h2>Fixed Bills</h2>
+    <table id="expenseTable">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Total</th>
+                <th>Frequency</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Existing rows will be inserted here -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Annual Total</th>
+                <td id="totalAmount">$0</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h3>Add New Bill</h3>
+    <form id="newBillForm">
+        <input type="text" id="desc" placeholder="Description" required>
+        <input type="number" id="amount" placeholder="Amount" required>
+        <select id="frequency">
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+            <option value="One-Time">One-Time</option>
+        </select>
+        <button type="submit">Add Bill</button>
+    </form>
+
+    <h3>Inflation Estimator</h3>
+    <form id="inflationForm">
+        <label for="years">Years from now:</label>
+        <input type="number" id="years" placeholder="Number of Years" required>
+        <button type="submit">Estimate Inflation</button>
+    </form>
+
+    <h3>Estimated Bills after Inflation</h3>
+    <p>In <span id="futureYears">0</span> years, your bills will be: <strong>$<span
+                id="estimatedBills">0.00</span></strong></p>
+
+    <h3>Retirement Account Estimator</h3>
+    <form id="retirementForm">
+        <div>
+            <label for="currentBalance">Current Retirement Balance:</label>
+            <input type="number" id="currentBalance" placeholder="Current Balance" required>
+        </div>
+        <div>
+            <label for="currentAge">Current Age:</label>
+            <input type="number" id="currentAge" placeholder="Current Age" required>
+        </div>
+        <div>
+            <label for="retirementAge">Projected Retirement Age:</label>
+            <input type="number" id="retirementAge" placeholder="Retirement Age" required>
+        </div>
+        <div>
+            <label for="preRetirementYield">Annual Yield Before Retirement (%):</label>
+            <input type="number" id="preRetirementYield" placeholder="Yield Before Retirement" required step="0.01">
+        </div>
+        <div>
+            <label for="postRetirementYield">Annual Yield After Retirement (%):</label>
+            <input type="number" id="postRetirementYield" placeholder="Yield After Retirement" required step="0.01">
+        </div>
+        <h3>Projected Retirement Savings</h3>
+        <p>At age <span id="displayRetirementAge">0</span>, your projected retirement savings will be: <strong>$<span
+                    id="projectedSavings">0.00</span></strong></p>
+        <label for="projectionAge">Age to Project Savings:</label>
+        <input type="number" id="projectionAge" placeholder="Projection Age" required>
+        <button type="submit">Calculate Retirement Savings</button>
+    </form>
+
+    <h3>Annual Bills Total</h3>
+    <p>Current annual bills: <strong>$<span id="annualBillsTotal">0.00</span></strong></p>
+
+    <!-- Checkbox to include bills in retirement calculation -->
+    <div>
+        <input type="checkbox" id="includeBills" name="includeBills">
+        <label for="includeBills">Subtract annual bills from retirement savings starting at retirement age</label>
+    </div>
+
+    <label for="ageToEndCalculation">Age to End Calculation:</label>
+    <input type="number" id="ageToEndCalculation" placeholder="Age to End Calculation" required>
+
+    <!-- This could be the inflated bills if they are fixed or a separate calculation if they vary -->
+    <label for="annualBillsAfterRetirement">Estimated Annual Bills After Retirement:</label>
+    <input type="number" id="annualBillsAfterRetirement" placeholder="Estimated Annual Bills" required>
+
+    <h3>Retirement Savings Over Time</h3>
+    <button id="calculateOverTime">Calculate</button>
+
+    <div>
+        <label for="socialSecurityBenefit">Monthly Social Security Benefit:</label>
+        <input type="number" id="socialSecurityBenefit" placeholder="Social Security Benefit" required step="0.01">
+    </div>
+
+    <table id="retirementTable">
+        <thead>
+            <tr>
+                <th>Age</th>
+                <th>Retirement Savings</th>
+                <th>Annual Bills</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Calculated rows will be inserted here -->
+        </tbody>
+    </table>
+
+    </div>
+
+
+
+</body>
+
+</html>
