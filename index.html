@@ -9,7 +9,6 @@
     <script src="scripts/bill.js" defer></script>
     <script src="scripts/inflation.js" defer></script>
     <script src="scripts/retirement.js" defer></script>
-    <script src="scripts/retirementWithBills.js" defer></script>
     <title>Retirement Savings Calculator</title>
 </head>
 
@@ -72,7 +71,15 @@
             <input type="number" id="currentAge" placeholder="Current Age" required>
         </div>
         <div>
-            <label for="retirementAge">Projected Retirement Age:</label>
+            <label for="contributionAmount">Contribution Per Pay Period:</label>
+            <input type="number" id="contributionAmount" placeholder="Contribution Amount" required>
+        </div>
+        <div>
+            <label for="payPeriodsPerYear">Pay Periods Per Year:</label>
+            <input type="number" id="payPeriodsPerYear" placeholder="Pay Periods Per Year" required>
+        </div>
+        <div>
+            <label for="retirementAge">Retirement Age:</label>
             <input type="number" id="retirementAge" placeholder="Retirement Age" required>
         </div>
         <div>
@@ -83,12 +90,8 @@
             <label for="postRetirementYield">Annual Yield After Retirement (%):</label>
             <input type="number" id="postRetirementYield" placeholder="Yield After Retirement" required step="0.01">
         </div>
-        <h3>Projected Retirement Savings</h3>
-        <p>At age <span id="displayRetirementAge">0</span>, your projected retirement savings will be: <strong>$<span
-                    id="projectedSavings">0.00</span></strong></p>
-        <label for="projectionAge">Age to Project Savings:</label>
-        <input type="number" id="projectionAge" placeholder="Projection Age" required>
         <button type="submit">Calculate Retirement Savings</button>
+        <p>Your projected retirement savings will be: <strong>$<span id="projectedSavings">0.00</span></strong></p>
     </form>
 
     <h3>Annual Bills Total</h3>
@@ -99,13 +102,6 @@
         <input type="checkbox" id="includeBills" name="includeBills">
         <label for="includeBills">Subtract annual bills from retirement savings starting at retirement age</label>
     </div>
-
-    <label for="ageToEndCalculation">Age to End Calculation:</label>
-    <input type="number" id="ageToEndCalculation" placeholder="Age to End Calculation" required>
-
-    <!-- This could be the inflated bills if they are fixed or a separate calculation if they vary -->
-    <label for="annualBillsAfterRetirement">Estimated Annual Bills After Retirement:</label>
-    <input type="number" id="annualBillsAfterRetirement" placeholder="Estimated Annual Bills" required>
 
     <h3>Retirement Savings Over Time</h3>
     <button id="calculateOverTime">show results over time</button>
@@ -129,9 +125,6 @@
     </table>
 
     </div>
-
-
-
 </body>
 
 </html>
