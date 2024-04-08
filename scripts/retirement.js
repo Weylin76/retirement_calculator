@@ -19,11 +19,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             // Adjust the bills for inflation each year
             let annualBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.-]+/g,""));
             annualBills *= (1 + inflationRate);
-            document.getElementById('annualBillsTotal').textContent = annualBills.toFixed(2);
+            document.getElementById('annualBillsTotal').textContent = annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         }
 
         // Update the UI with the calculated savings
-        document.getElementById('projectedSavings').textContent = currentBalance.toFixed(2);
+        document.getElementById('projectedSavings').textContent = currentBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     });
 });
+
 
