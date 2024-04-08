@@ -77,7 +77,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         let cellSavings = row.insertCell(1);
         let cellBills = row.insertCell(2);
 
-        if (age <= retirementAge) {
+        if (age < retirementAge) {
             // Include contributions and apply yield before retirement
             let annualContribution = monthlyContribution * payPeriodsPerYear;
             currentBalance += annualContribution;
@@ -85,7 +85,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         } else {
             // Apply yield and subtract bills after retirement
             // Inflate the bills starting the year after retirement
-            if (age > retirementAge) {
+            if (age >= retirementAge) {
                 annualBills *= (1 + inflationRate);
             }
             currentBalance *= (1 + postRetirementYield);
