@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const currentAge = parseInt(document.getElementById('currentAge').value, 10);
         const retirementAge = parseInt(document.getElementById('retirementAge').value, 10);
         const preRetirementYield = parseFloat(document.getElementById('preRetirementYield').value) / 100;
-        const contributionAmount = parseFloat(document.getElementById('contributionAmount').value);
+        const contributionAmount = parseFloat(document.getElementById('monthlyContribution').value);
         const payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
         const inflationRate = 0.03; // 3% inflation rate
 
