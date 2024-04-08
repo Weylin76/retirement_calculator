@@ -63,41 +63,49 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
     let monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value);
     let payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
     let inflationRate = 0.03; // 3% inflation rate
-
     let tableBody = document.getElementById('retirementTable').getElementsByTagName('tbody')[0];
+
     tableBody.innerHTML = ''; // Clear previous entries
 
+    // Calculate the initial non-inflated annual bills
     let annualBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.]/g, ''));
 
+    // Generate table rows for each year
     for (let age = currentAge; age < currentAge + 50; age++) {
         let row = tableBody.insertRow();
         let cellAge = row.insertCell(0);
         let cellSavings = row.insertCell(1);
         let cellBills = row.insertCell(2);
 
-        if (age < retirementAge) {
-            // Include the contributions only until retirement
+        if (age <= retirementAge) {
+            // Include contributions and apply yield before retirement
             let annualContribution = monthlyContribution * payPeriodsPerYear;
             currentBalance += annualContribution;
             currentBalance *= (1 + preRetirementYield);
         } else {
-            // Apply post-retirement yield and subtract annual bills
+            // Apply yield and subtract bills after retirement
+            // Inflate the bills starting the year after retirement
+            if (age > retirementAge) {
+                annualBills *= (1 + inflationRate);
+            }
             currentBalance *= (1 + postRetirementYield);
             currentBalance -= annualBills;
-            annualBills *= (1 + inflationRate); // Inflate the bills
         }
 
-        // Prevent the balance from going negative
+        // Prevent negative balance
         currentBalance = Math.max(0, currentBalance);
 
-        // Update the cells with formatted values
+        // Format numbers to US locale currency
         cellAge.textContent = age;
         cellSavings.textContent = currentBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-        cellBills.textContent = annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        cellBills.textContent = (age >= retirementAge) ? annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
     }
 });
 
 updateTotal();
+
+
+
 
 
 
