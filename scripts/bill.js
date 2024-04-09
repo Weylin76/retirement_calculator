@@ -62,47 +62,50 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
     let postRetirementYield = parseFloat(document.getElementById('postRetirementYield').value) / 100;
     let monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value);
     let payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
-    let inflationRate = 0.03; // 3% inflation rate
+    let inflationRate = parseFloat(document.querySelector('#inflationPercent').value) / 100;
     let tableBody = document.getElementById('retirementTable').getElementsByTagName('tbody')[0];
 
     tableBody.innerHTML = ''; // Clear previous entries
 
-    // Calculate the initial non-inflated annual bills
     let annualBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.]/g, ''));
 
-    // Generate table rows for each year
     for (let age = currentAge; age < currentAge + 50; age++) {
         let row = tableBody.insertRow();
         let cellAge = row.insertCell(0);
         let cellSavings = row.insertCell(1);
         let cellBills = row.insertCell(2);
+        let cellWithdraw = row.insertCell(3); // Placeholder for future logic
+        let cellFee = row.insertCell(4);
+        let cellTax = row.insertCell(5);
+
+        let annualFee = currentBalance * 0.003; // 0.3% fee
+        let annualTax = (annualBills) * 0.20; // Assuming tax is 20% of annual bills
+        let withdraw = 0;
 
         if (age < retirementAge) {
-            // Include contributions and apply yield before retirement
             let annualContribution = monthlyContribution * payPeriodsPerYear;
             currentBalance += annualContribution;
             currentBalance *= (1 + preRetirementYield);
         } else {
-            // Apply yield and subtract bills after retirement
-            // Inflate the bills starting the year after retirement
             if (age >= retirementAge) {
                 annualBills *= (1 + inflationRate);
             }
             currentBalance *= (1 + postRetirementYield);
             currentBalance -= annualBills;
+            currentBalance = Math.max(0, currentBalance - annualFee - annualTax);
         }
-
-        // Prevent negative balance
-        currentBalance = Math.max(0, currentBalance);
-
-        // Format numbers to US locale currency
+        // Update the table cells with formatted values
         cellAge.textContent = age;
         cellSavings.textContent = currentBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         cellBills.textContent = (age >= retirementAge) ? annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
+        cellWithdraw.textContent = (age>= retirementAge) ? withdraw.toLocaleString('en-US', { style: 'currency', currency: 'USD'}) : '';
+        cellFee.textContent = (age >= retirementAge) ? annualFee.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
+        cellTax.textContent = (age >= retirementAge) ? annualTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
     }
 });
 
 updateTotal();
+
 
 
 
