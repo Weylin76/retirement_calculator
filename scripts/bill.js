@@ -32,6 +32,7 @@ document.getElementById('newBillForm').addEventListener('submit', function(event
     updateTotal();
 });
 
+
 function updateTotal() {
     let totalAnnual = 0;
     let table = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
@@ -54,6 +55,30 @@ function updateTotal() {
     document.getElementById('annualBillsTotal').textContent = totalAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
+function calculateFederalTax(taxableIncome) {
+    const brackets = [
+        { threshold: 0, rate: 0.10 },
+        { threshold: 22000, rate: 0.12 },
+        { threshold: 89450, rate: 0.22 },
+        { threshold: 190750, rate: 0.24 },
+        { threshold: 364200, rate: 0.32 },
+        { threshold: 462500, rate: 0.35 },
+        { threshold: 693750, rate: 0.37 }
+    ];
+
+    let tax = 0;
+    let remainingIncome = taxableIncome;
+
+    for (let i = brackets.length - 1; i >= 0; i--) {
+        if (remainingIncome > brackets[i].threshold) {
+            tax += (remainingIncome - brackets[i].threshold) * brackets[i].rate;
+            remainingIncome = brackets[i].threshold;
+        }
+    }
+
+    return tax;
+}
+
 document.getElementById('calculateOverTime').addEventListener('click', function() {
     let currentAge = parseInt(document.getElementById('currentAge').value, 10);
     let retirementAge = parseInt(document.getElementById('retirementAge').value, 10);
@@ -74,13 +99,13 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         let cellAge = row.insertCell(0);
         let cellSavings = row.insertCell(1);
         let cellBills = row.insertCell(2);
-        let cellWithdraw = row.insertCell(3); // Placeholder for future logic
+        let cellWithdraw = row.insertCell(3);
         let cellFee = row.insertCell(4);
         let cellTax = row.insertCell(5);
 
         let annualFee = currentBalance * 0.003; // 0.3% fee
-        let annualTax = (annualBills) * 0.20; // Assuming tax is 20% of annual bills
-        let withdraw = 0;
+        let annualTax = 0; // Initialize annualTax at the top of the loop
+        let annualWithdrawal = 0;
 
         if (age < retirementAge) {
             let annualContribution = monthlyContribution * payPeriodsPerYear;
@@ -89,22 +114,27 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         } else {
             if (age >= retirementAge) {
                 annualBills *= (1 + inflationRate);
+                let taxableIncome = annualWithdrawal + annualBills; // Define annualWithdrawal as needed
+                annualTax = calculateFederalTax(taxableIncome);
+                currentBalance -= annualTax; // Subtract the tax
             }
             currentBalance *= (1 + postRetirementYield);
-            currentBalance -= annualBills;
-            currentBalance = Math.max(0, currentBalance - annualFee - annualTax);
+            currentBalance -= (annualBills + annualFee);
+            currentBalance = Math.max(0, currentBalance);
         }
+
         // Update the table cells with formatted values
         cellAge.textContent = age;
         cellSavings.textContent = currentBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         cellBills.textContent = (age >= retirementAge) ? annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
-        cellWithdraw.textContent = (age>= retirementAge) ? withdraw.toLocaleString('en-US', { style: 'currency', currency: 'USD'}) : '';
+        cellWithdraw.textContent = (age >= retirementAge) ? annualWithdrawal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
         cellFee.textContent = (age >= retirementAge) ? annualFee.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
         cellTax.textContent = (age >= retirementAge) ? annualTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
     }
 });
 
 updateTotal();
+
 
 
 
