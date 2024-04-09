@@ -95,6 +95,59 @@ function calculateFederalTax(taxableIncome, isMarried) {
     return tax;
 }
 
+function calculateCaliforniaTax(taxableIncome, isMarried) {
+    let brackets;
+
+    if (isMarried) {
+        // Sample brackets for married filing jointly in California
+        brackets = [
+            { threshold: 0, rate: 0.01 },
+            { threshold: 18650, rate: 0.02 },
+            { threshold: 44378, rate: 0.04 },
+            { threshold: 56084, rate: 0.06 },
+            { threshold: 286492, rate: 0.08 },
+            { threshold: 359407, rate: 0.093 },
+            { threshold: 599012, rate: 0.103 },
+            { threshold: 1000000, rate: 0.113 },
+            { threshold: 1250000, rate: 0.123 },
+            { threshold: 2500000, rate: 0.133 },
+        ];
+    } else {
+        // Sample brackets for single filers in California
+        brackets = [
+            { threshold: 0, rate: 0.01 },
+            { threshold: 9325, rate: 0.02 },
+            { threshold: 22184, rate: 0.04 },
+            { threshold: 34893, rate: 0.06 },
+            { threshold: 48435, rate: 0.08 },
+            { threshold: 61214, rate: 0.093 },
+            { threshold: 312686, rate: 0.103 },
+            { threshold: 375221, rate: 0.113 },
+            { threshold: 625369, rate: 0.123 },
+            { threshold: 1000000, rate: 0.133 },
+        ];
+    }
+
+    let tax = 0;
+    let remainingIncome = taxableIncome;
+
+    // Calculate tax by applying each bracket's rate to the income in that bracket
+    for (let i = brackets.length - 1; i >= 0; i--) {
+        if (remainingIncome > brackets[i].threshold) {
+            tax += (remainingIncome - brackets[i].threshold) * brackets[i].rate;
+            remainingIncome = brackets[i].threshold;
+        }
+    }
+
+    return tax;
+}
+
+function calculateMichiganTax(taxableIncome) {
+    const taxRate = 0.0425; // Replace this with the current tax rate if it has changed
+
+    let tax = taxableIncome * taxRate;
+    return tax;
+}
 
 document.getElementById('calculateOverTime').addEventListener('click', function() {
     let currentAge = parseInt(document.getElementById('currentAge').value, 10);
@@ -120,6 +173,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         let cellWithdraw = row.insertCell(3);
         let cellFee = row.insertCell(4);
         let cellTax = row.insertCell(5);
+        let cellStateTax = row.insertCell(6);
 
         let annualFee = currentBalance * 0.003; // 0.3% fee
         let annualWithdrawal = 0; // Placeholder for withdrawal logic
@@ -134,7 +188,8 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
             // Define your annual withdrawal logic here
             let taxableIncome = annualWithdrawal + annualBills;
             annualTax = calculateFederalTax(taxableIncome, isMarried);
-            currentBalance -= (annualTax + annualBills + annualFee);
+            stateTax = calculateCaliforniaTax(taxableIncome, isMarried)
+            currentBalance -= (annualTax + annualBills + annualFee + stateTax);
             currentBalance *= (1 + postRetirementYield);
         }
 
@@ -147,6 +202,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         cellWithdraw.textContent = (age >= retirementAge) ? annualWithdrawal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
         cellFee.textContent = (age >= retirementAge) ? annualFee.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
         cellTax.textContent = (age >= retirementAge) ? annualTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
+        cellStateTax.textContent = (age >= retirementAge) ? stateTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
     }
 });
 
