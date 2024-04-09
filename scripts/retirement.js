@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const preRetirementYield = parseFloat(document.getElementById('preRetirementYield').value) / 100;
         const contributionAmount = parseFloat(document.getElementById('monthlyContribution').value);
         const payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
-        const inflationRate = 0.03; // 3% inflation rate
+        const inflationRate = parseFloat(document.querySelector('#inflationPercent').value) / 100; // 3% inflation rate
 
         // Calculate savings growth before retirement, including contributions
         for (let age = currentAge; age < retirementAge; age++) {
