@@ -55,16 +55,32 @@ function updateTotal() {
     document.getElementById('annualBillsTotal').textContent = totalAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
-function calculateFederalTax(taxableIncome) {
-    const brackets = [
-        { threshold: 0, rate: 0.10 },
-        { threshold: 22000, rate: 0.12 },
-        { threshold: 89450, rate: 0.22 },
-        { threshold: 190750, rate: 0.24 },
-        { threshold: 364200, rate: 0.32 },
-        { threshold: 462500, rate: 0.35 },
-        { threshold: 693750, rate: 0.37 }
-    ];
+function calculateFederalTax(taxableIncome, isMarried) {
+    let brackets;
+
+    if (isMarried) {
+        // Married filing jointly
+        brackets = [
+            { threshold: 0, rate: 0.10 },
+            { threshold: 22000, rate: 0.12 },
+            { threshold: 89450, rate: 0.22 },
+            { threshold: 190750, rate: 0.24 },
+            { threshold: 364200, rate: 0.32 },
+            { threshold: 462500, rate: 0.35 },
+            { threshold: 693750, rate: 0.37 }
+        ];
+    } else {
+        // Single filer
+        brackets = [
+            { threshold: 0, rate: 0.10 },
+            { threshold: 11200, rate: 0.12 },
+            { threshold: 44725, rate: 0.22 },
+            { threshold: 95375, rate: 0.24 },
+            { threshold: 182100, rate: 0.32 },
+            { threshold: 231250, rate: 0.35 },
+            { threshold: 578125, rate: 0.37 }
+        ];
+    }
 
     let tax = 0;
     let remainingIncome = taxableIncome;
@@ -79,6 +95,7 @@ function calculateFederalTax(taxableIncome) {
     return tax;
 }
 
+
 document.getElementById('calculateOverTime').addEventListener('click', function() {
     let currentAge = parseInt(document.getElementById('currentAge').value, 10);
     let retirementAge = parseInt(document.getElementById('retirementAge').value, 10);
@@ -89,6 +106,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
     let payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
     let inflationRate = parseFloat(document.querySelector('#inflationPercent').value) / 100;
     let tableBody = document.getElementById('retirementTable').getElementsByTagName('tbody')[0];
+    let isMarried = document.getElementById('married').checked;
 
     tableBody.innerHTML = ''; // Clear previous entries
 
@@ -104,26 +122,25 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         let cellTax = row.insertCell(5);
 
         let annualFee = currentBalance * 0.003; // 0.3% fee
-        let annualTax = 0; // Initialize annualTax at the top of the loop
-        let annualWithdrawal = 0;
+        let annualWithdrawal = 0; // Placeholder for withdrawal logic
+        let annualTax = 0;
 
         if (age < retirementAge) {
             let annualContribution = monthlyContribution * payPeriodsPerYear;
             currentBalance += annualContribution;
             currentBalance *= (1 + preRetirementYield);
         } else {
-            if (age >= retirementAge) {
-                annualBills *= (1 + inflationRate);
-                let taxableIncome = annualWithdrawal + annualBills; // Define annualWithdrawal as needed
-                annualTax = calculateFederalTax(taxableIncome);
-                currentBalance -= annualTax; // Subtract the tax
-            }
+            annualBills *= (1 + inflationRate);
+            // Define your annual withdrawal logic here
+            let taxableIncome = annualWithdrawal + annualBills;
+            annualTax = calculateFederalTax(taxableIncome, isMarried);
+            currentBalance -= (annualTax + annualBills + annualFee);
             currentBalance *= (1 + postRetirementYield);
-            currentBalance -= (annualBills + annualFee);
-            currentBalance = Math.max(0, currentBalance);
         }
 
-        // Update the table cells with formatted values
+        currentBalance = Math.max(0, currentBalance);
+
+        // Updating the table cells with the calculated values
         cellAge.textContent = age;
         cellSavings.textContent = currentBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         cellBills.textContent = (age >= retirementAge) ? annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
@@ -134,6 +151,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
 });
 
 updateTotal();
+
 
 
 
