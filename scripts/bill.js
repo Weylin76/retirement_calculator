@@ -175,7 +175,7 @@ document.getElementById('calculateOverTime').addEventListener('click', function(
         let cellTax = row.insertCell(5);
         let cellStateTax = row.insertCell(6);
 
-        let annualFee = currentBalance * 0.003; // 0.3% fee
+        let annualFee = parseFloat(document.querySelector('#annualFee').value / 100) * currentBalance; 
         let annualWithdrawal = 0; // Placeholder for withdrawal logic
         let annualTax = 0;
 
