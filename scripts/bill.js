@@ -149,73 +149,82 @@ function calculateMichiganTax(taxableIncome) {
     return tax;
 }
 
-document.getElementById('calculateOverTime').addEventListener('click', function() {
-    let currentAge = parseInt(document.getElementById('currentAge').value, 10);
-    let retirementAge = parseInt(document.getElementById('retirementAge').value, 10);
-    let currentBalance = parseFloat(document.getElementById('currentBalance').value);
-    let preRetirementYield = parseFloat(document.getElementById('preRetirementYield').value) / 100;
-    let postRetirementYield = parseFloat(document.getElementById('postRetirementYield').value) / 100;
-    let monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value);
-    let payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
-    let inflationRate = parseFloat(document.querySelector('#inflationPercent').value) / 100;
-    let tableBody = document.getElementById('retirementTable').getElementsByTagName('tbody')[0];
-    let isMarried = document.getElementById('married').checked;
+function calculateBillsAtRetirement(initialBills, inflationRate, yearsToRetirement) {
+    return initialBills * Math.pow(1 + inflationRate, yearsToRetirement);
+}
 
+// This function updates the display without changing any values
+function updateTotalDisplay() {
+    let totalAnnual = 0;
+    let table = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
+
+    // Your existing logic for calculating total annual expenses...
+    document.getElementById('totalAmount').textContent = totalAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+}
+
+// Function to apply inflation and social security benefits
+function applyAdjustments(initialBills, inflationRate, years, SSAmount, age, SSAge) {
+    let adjustedBills = initialBills * Math.pow(1 + inflationRate, years);
+    if (age >= SSAge) {
+        adjustedBills -= SSAmount;
+    }
+    return adjustedBills;
+}
+
+   // Function to update the retirement table
+   function updateRetirementTable() {
+    let retirementAge = parseInt(document.getElementById('retirementAge').value, 10);
+    let SSAge = parseInt(document.getElementById('SSAge').value, 10);
+    let SSAmount = parseFloat(document.getElementById('SSAmount').value) * 12;
+    let postRetirementYield = parseFloat(document.getElementById('postRetirementYield').value) / 100;
+    let inflationRate = parseFloat(document.querySelector('#inflationPercent').value) / 100;
+    let isMarried = document.getElementById('married').checked;
+    let tableBody = document.getElementById('retirementTable').getElementsByTagName('tbody')[0];
+    // Make sure you have defined currentAge above this function or retrieve it again here
+    let currentAge = parseInt(document.getElementById('currentAge').value, 10);
+
+     // Make sure to retrieve the initial bills before calculating the bills at retirement
+     let initialBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.]/g, ''));
+
+     // Calculate the bills at retirement after getting the initial bills
+     let yearsToRetirement = retirementAge - currentAge;
+     let billsAtRetirement = calculateBillsAtRetirement(initialBills, inflationRate, yearsToRetirement);
+ 
+     // Assume calculateProjectedRetirementSavings is a function that calculates the current balance at retirement
+     let currentBalanceAtRetirement = calculateProjectedRetirementSavings();
+     console.log(`Current Balance at Retirement: ${currentBalanceAtRetirement}`);
     tableBody.innerHTML = ''; // Clear previous entries
 
-    let annualBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.]/g, ''));
+    // Process each year of retirement starting from the retirement age
+    for (let age = retirementAge; age <= retirementAge + 40; age++) {
+        let years = age - retirementAge;
+        let adjustedAnnualBills = years > 0 
+            ? applyAdjustments(billsAtRetirement, inflationRate, years, SSAmount, age, SSAge) 
+            : billsAtRetirement; // Starting point at retirement
 
-    for (let age = currentAge; age < currentAge + 50; age++) {
-        let row = tableBody.insertRow();
-        let cellAge = row.insertCell(0);
-        let cellSavings = row.insertCell(1);
-        let cellBills = row.insertCell(2);
-        let cellWithdraw = row.insertCell(3);
-        let cellFee = row.insertCell(4);
-        let cellTax = row.insertCell(5);
-        let cellStateTax = row.insertCell(6);
+        let annualTax = calculateFederalTax(adjustedAnnualBills, isMarried);
+        let stateTax = calculateCaliforniaTax(adjustedAnnualBills, isMarried);
 
-        let annualFee = parseFloat(document.querySelector('#annualFee').value / 100) * currentBalance; 
-        let annualWithdrawal = 0; // Placeholder for withdrawal logic
-        let annualTax = 0;
-
-        if (age < retirementAge) {
-            let annualContribution = monthlyContribution * payPeriodsPerYear;
-            currentBalance += annualContribution;
-            currentBalance *= (1 + preRetirementYield);
-        } else {
-            annualBills *= (1 + inflationRate);
-            // Define your annual withdrawal logic here
-            let taxableIncome = annualWithdrawal + annualBills;
-            annualTax = calculateFederalTax(taxableIncome, isMarried);
-            stateTax = calculateCaliforniaTax(taxableIncome, isMarried)
-            currentBalance -= (annualTax + annualBills + annualFee + stateTax);
-            currentBalance *= (1 + postRetirementYield);
+        // Subtract the bills only after retirement
+        if (age >= retirementAge) {
+            currentBalanceAtRetirement -= (annualTax + stateTax + adjustedAnnualBills);
+            currentBalanceAtRetirement *= (1 + postRetirementYield);
         }
 
-        currentBalance = Math.max(0, currentBalance);
+        // Ensure balance doesn't go negative
+        currentBalanceAtRetirement = Math.max(0, currentBalanceAtRetirement);
 
-        // Updating the table cells with the calculated values
-        cellAge.textContent = age;
-        cellSavings.textContent = currentBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-        cellBills.textContent = (age >= retirementAge) ? annualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
-        cellWithdraw.textContent = (age >= retirementAge) ? annualWithdrawal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
-        cellFee.textContent = (age >= retirementAge) ? annualFee.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
-        cellTax.textContent = (age >= retirementAge) ? annualTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
-        cellStateTax.textContent = (age >= retirementAge) ? stateTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
+        // Add the data to the table
+        let row = tableBody.insertRow();
+        row.insertCell(0).textContent = age;
+        row.insertCell(1).textContent = currentBalanceAtRetirement.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        row.insertCell(2).textContent = adjustedAnnualBills.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        row.insertCell(3).textContent = annualTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        row.insertCell(4).textContent = stateTax.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     }
+}
+
+// Ensure this listener is called after the DOM has fully loaded, and retirement.js is available
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('calculateOverTime').addEventListener('click', updateRetirementTable);
 });
-
-updateTotal();
-
-
-
-
-
-
-
-
-
-
-
-  
