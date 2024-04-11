@@ -94,13 +94,13 @@
             <label for="postRetirementYield">Annual Yield After Retirement (%):</label>
             <input type="number" id="postRetirementYield" placeholder="Yield After Retirement" required step="0.01">
         </div>
-
+        <hr>
         <p>Select your marital status:</p>
-        <input type="radio" id="single" name="marital_status" value="single">
+        <input type="radio" id="single" name="marital_status" value="single" class="display-inline">
         <label for="single">Single</label><br>
-        <input type="radio" id="married" name="marital_status" value="married">
+        <input type="radio" id="married" name="marital_status" value="married" class="display-inline">
         <label for="married">Married</label><br><br>
-
+        <hr>
         <div>
             <label for="SSAmount">Social Security Benefit:</label>
             <input type="number" id="SSAmount" placeholder="Monthly Amount" required step="0.01">
@@ -115,7 +115,7 @@
         <p>Your projected retirement savings will be: <strong><span id="projectedRetirementSavings">0.00</span></strong>
         </p>
     </form>
-
+    <hr>
     <h3>Annual Bills Total</h3>
     <p>Bills at retirement (with inflation): <strong><span id="annualBillsTotal">0.00</span></strong></p>
 
@@ -124,7 +124,7 @@
         <input type="checkbox" id="includeBills" name="includeBills">
         <label for="includeBills">Subtract annual bills from retirement savings starting at retirement age</label>
     </div>
-
+    <hr>
     <h3>Retirement Savings Over Time</h3>
     <button id="calculateOverTime">show results over time</button>
 

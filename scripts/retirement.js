@@ -5,7 +5,6 @@ function calculateProjectedRetirementSavings() {
     const preRetirementYield = parseFloat(document.getElementById('preRetirementYield').value) / 100;
     const contributionAmount = parseFloat(document.getElementById('monthlyContribution').value);
     const payPeriodsPerYear = parseInt(document.getElementById('payPeriodsPerYear').value, 10);
-    const inflationRate = parseFloat(document.querySelector('#inflationPercent').value) / 100;
 
     for (let age = currentAge; age < retirementAge; age++) {
         let yearlyContribution = contributionAmount * payPeriodsPerYear;

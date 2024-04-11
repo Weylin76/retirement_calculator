@@ -192,25 +192,30 @@ function applyAdjustments(initialBills, inflationRate, years, SSAmount, age, SSA
  
      // Assume calculateProjectedRetirementSavings is a function that calculates the current balance at retirement
      let currentBalanceAtRetirement = calculateProjectedRetirementSavings();
-     console.log(`Current Balance at Retirement: ${currentBalanceAtRetirement}`);
+
     tableBody.innerHTML = ''; // Clear previous entries
 
     // Process each year of retirement starting from the retirement age
     for (let age = retirementAge; age <= retirementAge + 40; age++) {
         let years = age - retirementAge;
-        let adjustedAnnualBills = years > 0 
-            ? applyAdjustments(billsAtRetirement, inflationRate, years, SSAmount, age, SSAge) 
-            : billsAtRetirement; // Starting point at retirement
-
-        let annualTax = calculateFederalTax(adjustedAnnualBills, isMarried);
-        let stateTax = calculateCaliforniaTax(adjustedAnnualBills, isMarried);
-
-        // Subtract the bills only after retirement
+        let adjustedAnnualBills = applyAdjustments(billsAtRetirement, inflationRate, years, SSAmount, age, SSAge);
+    
+        // Adjust the bills by subtracting SSAmount if age is greater than or equal to SSAge
+        if (age >= SSAge) {
+            adjustedAnnualBills = Math.max(0, adjustedAnnualBills - SSAmount);
+        }
+        console.log(adjustedAnnualBills)
+        console.log(SSAmount)
+        let taxableIncome = adjustedAnnualBills  + (age >= SSAge ? SSAmount : 0);  // Include SSAmount in taxable income if age is >= SSAge
+    
+        let annualTax = calculateFederalTax(taxableIncome, isMarried);
+        let stateTax = calculateCaliforniaTax(taxableIncome, isMarried);
+    
+        // Subtract the bills and taxes only after retirement
         if (age >= retirementAge) {
             currentBalanceAtRetirement -= (annualTax + stateTax + adjustedAnnualBills);
             currentBalanceAtRetirement *= (1 + postRetirementYield);
         }
-
         // Ensure balance doesn't go negative
         currentBalanceAtRetirement = Math.max(0, currentBalanceAtRetirement);
 
