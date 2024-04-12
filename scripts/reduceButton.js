@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Set a timeout to reset the button size back to normal after 1.5 seconds
         setTimeout(() => {
           this.style.transform = 'scale(1)';
-        }, 1500);
+        }, 150);
       });
     });
   });
