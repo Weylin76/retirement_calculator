@@ -58,3 +58,7 @@ table {
     display: inline;
     width: 20px;
   }
+
+  #newBillForm #frequency {
+    font-size: 1rem;
+  }

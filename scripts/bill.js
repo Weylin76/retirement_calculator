@@ -156,7 +156,6 @@ function calculateBillsAtRetirement(initialBills, inflationRate, yearsToRetireme
 // This function updates the display without changing any values
 function updateTotalDisplay() {
     let totalAnnual = 0;
-    let table = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
 
     // Your existing logic for calculating total annual expenses...
     document.getElementById('totalAmount').textContent = totalAnnual.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -183,15 +182,15 @@ function applyAdjustments(initialBills, inflationRate, years, SSAmount, age, SSA
     // Make sure you have defined currentAge above this function or retrieve it again here
     let currentAge = parseInt(document.getElementById('currentAge').value, 10);
 
-     // Make sure to retrieve the initial bills before calculating the bills at retirement
-     let initialBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.]/g, ''));
+    // Make sure to retrieve the initial bills before calculating the bills at retirement
+    let initialBills = parseFloat(document.getElementById('annualBillsTotal').textContent.replace(/[^0-9.]/g, ''));
 
-     // Calculate the bills at retirement after getting the initial bills
-     let yearsToRetirement = retirementAge - currentAge;
-     let billsAtRetirement = calculateBillsAtRetirement(initialBills, inflationRate, yearsToRetirement);
+    // Calculate the bills at retirement after getting the initial bills
+    let yearsToRetirement = retirementAge - currentAge;
+    let billsAtRetirement = calculateBillsAtRetirement(initialBills, inflationRate, yearsToRetirement);
  
-     // Assume calculateProjectedRetirementSavings is a function that calculates the current balance at retirement
-     let currentBalanceAtRetirement = calculateProjectedRetirementSavings();
+    // Assume calculateProjectedRetirementSavings is a function that calculates the current balance at retirement
+    let currentBalanceAtRetirement = calculateProjectedRetirementSavings();
 
     tableBody.innerHTML = ''; // Clear previous entries
 
@@ -200,13 +199,8 @@ function applyAdjustments(initialBills, inflationRate, years, SSAmount, age, SSA
         let years = age - retirementAge;
         let adjustedAnnualBills = applyAdjustments(billsAtRetirement, inflationRate, years, SSAmount, age, SSAge);
     
-        // Adjust the bills by subtracting SSAmount if age is greater than or equal to SSAge
-        if (age >= SSAge) {
-            adjustedAnnualBills = Math.max(0, adjustedAnnualBills - SSAmount);
-        }
-        console.log(adjustedAnnualBills)
-        console.log(SSAmount)
-        let taxableIncome = adjustedAnnualBills  + (age >= SSAge ? SSAmount : 0);  // Include SSAmount in taxable income if age is >= SSAge
+        // No need to subtract SSAmount again because it's already accounted for in applyAdjustments function.
+        let taxableIncome = adjustedAnnualBills + (age >= SSAge ? SSAmount : 0);
     
         let annualTax = calculateFederalTax(taxableIncome, isMarried);
         let stateTax = calculateCaliforniaTax(taxableIncome, isMarried);
