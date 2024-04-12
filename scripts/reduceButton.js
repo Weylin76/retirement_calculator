@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', function () {
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         // When a button is clicked, reduce its size to 90%
-        this.style.transform = 'scale(0.9)';
+        this.style.transform = 'scale(0.95)';
   
         // Set a timeout to reset the button size back to normal after 1.5 seconds
         setTimeout(() => {
           this.style.transform = 'scale(1)';
-        }, 150);
+        }, 50);
       });
     });
   });
