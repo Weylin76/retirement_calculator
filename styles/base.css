@@ -62,3 +62,26 @@ table {
   #newBillForm #frequency {
     font-size: 1rem;
   }
+
+  /* Add this style to your CSS file or within a <style> tag in your HTML */
+
+#retirementTable {
+  display: block;
+  height: 400px; /* Adjust the height as needed for your design */
+  overflow-y: auto;
+}
+
+
+  /* Add this style to your CSS file or within a <style> tag in your HTML */
+
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #fff; /* or any color that matches your design */
+  z-index: 10; /* to ensure the header is above other content when scrolling */
+}
+
+/* Optional: add a shadow to the sticky header to give it some depth and distinguish from the rest of the table rows */
+thead th {
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
